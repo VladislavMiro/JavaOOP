@@ -45,7 +45,6 @@ public class Main {
     }
 
     private static ArrayList<String> changeSymbol(ArrayList<String> strArr) {
-        ArrayList<String> newArray = new ArrayList<>();
 
         for (int i = 0; i < strArr.size(); i++) {
             String st = strArr.get(i);
@@ -53,7 +52,7 @@ public class Main {
             do {
                 ch = (char) ThreadLocalRandom.current().nextInt(32,127);
             } while (st.indexOf(ch) >= 0);
-            strArr.set(i, new String(new char[] {st.charAt(0),ch,st.charAt(2)}));
+            strArr.set(i, st.replace(st.charAt(1), ch));
         }
 
         return strArr;

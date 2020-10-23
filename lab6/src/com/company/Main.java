@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
@@ -9,26 +11,33 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Commands command;
         String path;
+        Map<String,String> dictionary = new HashMap<>();
 
         do {
             commandLine.printCurrentDir();
 
             String str = scanner.nextLine();
-            String[] arrStr = commandLine.parseString(str);
+
+            dictionary = commandLine.parseString(str);
+
 
             try {
-                command = Commands.valueOf(arrStr[0].toUpperCase());
+                command = Commands.valueOf(dictionary.get("command").toUpperCase());
             } catch (Exception exe) {
                 command = Commands.valueOf("ERROR");
             }
 
             switch (command) {
                 case CD:
-                    path = arrStr.length > 1 ? arrStr[1] : "";
-                    commandLine.changeDir(path);
+                    path = dictionary.get("path");
+                    if(path != null) {
+                        commandLine.changeDir(path);
+                    } else {
+                        System.out.println("Ошибка в записи команды.");
+                    }
                     break;
                 case LS:
-                    path = arrStr.length > 1 ? arrStr[1] : "";
+                    path = dictionary.get("path") != null ? dictionary.get("path") : "";
                     commandLine.listCatalog(path);
                     break;
                 case CLEAR:
@@ -37,33 +46,38 @@ public class Main {
                     } catch (Exception e) {}
                     break;
                 case CAT:
-                    if(arrStr.length > 1) {
-                        commandLine.openTextFile(arrStr[1]);
-                    } else { System.out.println("ошибка чтения файла");}
+                    path = dictionary.get("path");
+                    if(path != null) {
+                        commandLine.openTextFile(path);
+                    } else { System.out.println("ошибка чтения файла"); }
                     break;
                 case TOUCH:
-                    if(arrStr.length > 1) {
-                        commandLine.createTextFile(arrStr[1]);
+                    path = dictionary.get("path");
+                    if(path != null) {
+                        commandLine.createTextFile(path);
                     } else {
                         System.out.println("Ошибка в записи команды.");
                     }
                     break;
                 case RM:
-                    if(arrStr.length > 1) {
-                        commandLine.deleteFile(arrStr[1]);
+                    path = dictionary.get("path");
+                    if(path != null) {
+                        commandLine.deleteFile(path);
                     } else {
                         System.out.println("Ошибка в записи команды.");
                     }
                     break;
                 case TEE:
-                    if(arrStr.length == 3) {
-                        commandLine.addDataInTextFile(arrStr[1], arrStr[2]);
+                    path = dictionary.get("path");
+                    if(path != null) {
+                        String data = dictionary.get("data") == null ? "" : dictionary.get("data");
+                        commandLine.addDataInTextFile(path, data);
                     } else {
                         System.out.println("Ошибка в записи команды.");
                     }
                     break;
                 case ERROR:
-                    System.out.println("Ошибка, неизветсная команда.");
+                    System.out.println("Ошибка, неизветсная команда, или ошибка в записи команды.");
                     break;
             }
 

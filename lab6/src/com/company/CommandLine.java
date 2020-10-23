@@ -7,16 +7,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CommandLine {
     private String currentDir;
     private File file;
 
     CommandLine() {
-        /*file = new File("C:/Users");
-        currentDir = file.getAbsolutePath();
-         */
         currentDir = System.getProperty("user.home");
     }
 
@@ -25,7 +24,7 @@ public class CommandLine {
 
         switch (Math.toIntExact(count)) {
             case 0 -> {
-                file = new File(currentDir + "/" + path);
+                file = new File(currentDir + File.separator + path);
                 if (file.exists()) {
                     currentDir = file.getAbsolutePath();
                 } else {
@@ -35,7 +34,8 @@ public class CommandLine {
             case 2 -> {
                 file = new File(currentDir);
                 if (file.exists()) {
-                    currentDir = file.getParent();
+                    String dir = file.getParent();
+                    currentDir = dir == null? currentDir : dir;
                 } else {
                     System.out.println("Ошибка, каталог не найден.");
                 }
@@ -46,7 +46,7 @@ public class CommandLine {
     }
 
     public void listCatalog(String path) {
-        file = new File(currentDir+path);
+        file = new File(currentDir+File.separator + path);
         if (file.exists()) {
             File[] filesList = file.listFiles();
             assert filesList != null;
@@ -56,12 +56,27 @@ public class CommandLine {
         }
     }
 
-    public String[] parseString(String str) {
-        String[] array;
+    public Map<String,String> parseString(String str) {
+        ArrayList<String> arr = new ArrayList<>();
+        Map<String,String> dictionary = new HashMap<>();
 
-        array = str.split(" ");
+        str = str.trim();
+        String command = regex("^[a-zA-z]{0,4}\\S", str);
+        String path = regex("\s([\\wа-яА-Я\\/\\.\\_ ]){0,}($|,\\W)", str);
+        String data = regex(",[\\s\\S]*$", str);
 
-        return array;
+        dictionary.put("command", command != null ? command : null);
+        dictionary.put("path", path != null ? path.replaceAll(",", "").trim() : null);
+        dictionary.put("data", data != null ? data.replaceFirst(",", "").trim() : null);
+
+        return dictionary;
+    }
+
+    private String regex(String pattern, String string) {
+        Pattern _pattern = Pattern.compile(pattern);
+        Matcher matcher = _pattern.matcher(string);
+
+        return matcher.find() == true ? string.substring(matcher.start(), matcher.end()) : null;
     }
 
     public void printCurrentDir() {
@@ -69,7 +84,7 @@ public class CommandLine {
     }
 
     public void openTextFile(String fileName) {
-        file = new File(currentDir + "/" + fileName);
+        file = new File(currentDir + File.separator + fileName);
 
         if (file.exists() && file.isFile()) {
             try {
@@ -90,7 +105,7 @@ public class CommandLine {
         file = new File(currentDir);
         if(file.exists() && file.isDirectory()) {
             try {
-               if (new File(currentDir + "/" + path).createNewFile()) System.out.println("Файл успешно создан.");
+               if (new File(currentDir + File.separator + path).createNewFile()) System.out.println("Файл успешно создан.");
             } catch (Exception e) {
                 System.out.println("Не удалось создать файл.");
             }
@@ -101,7 +116,7 @@ public class CommandLine {
     }
 
     public void deleteFile(String path) {
-        file = new File(currentDir + "/" + path);
+        file = new File(currentDir + File.separator + path);
         if(file.exists() && file.isFile()) {
             try {
                 if (file.delete()) System.out.println("Файл был успешно удален.");
@@ -115,13 +130,13 @@ public class CommandLine {
     }
 
     public void addDataInTextFile(String path, String text) {
-        file = new File(currentDir + "/" + path);
+        file = new File(currentDir + File.separator + path);
 
         if(!file.exists()) createTextFile(path);
-        file = new File(currentDir + "/" + path);
+        file = new File(currentDir + File.separator + path);
         try {
             System.out.println(file.toString());
-            Files.write(Paths.get(currentDir + "/" + path), text.getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(currentDir + File.separator + path), text.getBytes(), StandardOpenOption.APPEND);
         }catch (IOException e) {
             System.out.println("Не удалоь выполнить запись в файл");
         }

@@ -57,7 +57,6 @@ public class CommandLine {
     }
 
     public Map<String,String> parseString(String str) {
-        ArrayList<String> arr = new ArrayList<>();
         Map<String,String> dictionary = new HashMap<>();
 
         str = str.trim();

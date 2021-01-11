@@ -1,7 +1,7 @@
 package com.company;
 
 public enum Cargo {
-    bulk,
-    liquid,
-    container;
+    bulk, //сыпучий
+    liquid, //жидкий
+    container; //контейнер
 }

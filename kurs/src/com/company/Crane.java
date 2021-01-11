@@ -7,9 +7,11 @@ public class Crane {
     private int unloadCargoWeightPerDay;
     private Date delayTime;
     private Ship currentShip;
+    private Cargo cargoType;
 
-    public Crane(int unloadCargoWeightPerDay) {
+    public Crane(Cargo craneCargoType, int unloadCargoWeightPerDay) {
         this.unloadCargoWeightPerDay = unloadCargoWeightPerDay;
+        cargoType = craneCargoType;
     }
 
     public Ship getCurrentShip() {
@@ -43,4 +45,7 @@ public class Crane {
         return currentShip != null;
     }
 
+    public Cargo getCargoType() {
+        return cargoType;
+    }
 }

@@ -1,11 +1,8 @@
 package com.company;
 
-import java.util.Date;
-
 public class Crane {
     private int cost = 30000;
     private int unloadCargoWeightPerDay;
-    private Date delayTime;
     private Ship currentShip;
     private Cargo cargoType;
 
@@ -24,17 +21,13 @@ public class Crane {
 
     public boolean unloadShip() {
         if(currentShip != null) {
-            if (currentShip.cargoWeight < unloadCargoWeightPerDay) {
-                currentShip.cargoWeight = 0;
+            if (currentShip.getCargoWeight() < unloadCargoWeightPerDay) {
+                currentShip.setCargoWeight(0);
             } else {
-                currentShip.cargoWeight -= unloadCargoWeightPerDay;
+                currentShip.substractTheWeightOfTheCargo(unloadCargoWeightPerDay);
             }
 
-            if (currentShip.cargoWeight == 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return currentShip.getCargoWeight() == 0;
         } else  {
             return false;
         }
